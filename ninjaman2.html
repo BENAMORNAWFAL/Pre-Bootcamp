@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>NinjaMan</title>
+        <style type="text/css">
+
+            * {margin:0; 
+              padding:0;
+            }
+
+            .row {line-height: 0;}
+            
+
+            .wall {background-color: rgb(94, 255, 0);
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+            }
+
+            .sushi {background-color: black;
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+                background-image: url('sushi.png');
+                background-size: contain;
+
+            }
+
+            .blank {background-color: black;
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+            
+            }
+            
+            .onigiri {background-color: black;
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+                background-image: url('onigiri.jpg');
+                background-size: contain;
+                
+            }
+
+            #ninjaman {background-color: black;
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+                background-image: url('ninja.gif');
+                background-size:contain;
+                position: absolute;
+                left: 40px;
+                top: 40px;
+            }         
+            .gameover {background-color: red;
+                height: 40px;
+                width: 220px;
+                display: inline-block;
+                
+            }
+            #ghost {background-color: black;
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+                background-image: url('ghost1.gif');
+                background-size:contain;
+                position: absolute;
+                left: 160px;
+                top: 160px;
+            }
+            #ghost2 {background-color: black;
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+                background-image: url('ghost2.gif');
+                background-size:contain;
+                position: absolute;
+                left: 400px;
+                top: 160px;
+            }
+            
+
+        </style>
+    </head>
+    <body>
+        <div id='world'></div>
+        <div id='ninjaman'></div>
+        <div id='ghost'></div> 
+        <div id='ghost2'></div>
+        <h2 id= 'score'></h2>
+        <h2 id= 'live'></h2>
+        <h1 id='gameover'></h1>
+     </body>
+    
+    <script type="text/javascript">
+        var  world= [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,0,0,0,1,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,1,1],
+            [1,0,0,0,0,0,0,1,0,1,0,0,1],
+            [1,1,1,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,1,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1],
+        ];
+       
+        var worldDict={
+            0: 'blank',
+            1: 'wall',
+            2: 'sushi',
+            3: 'onigiri',
+            4: 'blank'
+            
+            
+        }      
+
+        function bot(){
+            for(var i=1;i<8;i++){
+                for(var j=1;j<13;j++){
+                    if(world[i][j]==0){
+                        world[i][j]=Math.floor(Math.random()* 4);
+                        if(world[i][j]==0){world[i][j]+=2;}else if(world[i][j]==1){world[i][j]+=1;}
+                    }
+                }
+            }
+        }
+        bot();
+    
+        
+        
+
+        function drawWorld(){
+            output = "";
+            for(var row = 0; row < world.length; row++){
+                output += "<div class = 'row'>"
+                for(var x = 0; x < world[row].length; x++){
+                    output += "<div class = '" + worldDict[world[row][x]] +"'></div>"
+                }
+            output +=  "</div>"
+            }
+            document.getElementById('world').innerHTML = output;
+        }
+        drawWorld();
+        var s=0;
+        var liv=3;
+        var ghost2={
+            x:10,
+            y:4,
+        }
+
+        var ninjaman={
+            x: 1,
+            y: 1,
+        }
+        function drawninjaman(){
+            document.getElementById('ninjaman').style.top = ninjaman.y * 40 + 'px'
+            document.getElementById('ninjaman').style.left = ninjaman.x * 40 + 'px'
+        }
+        drawninjaman();
+        
+
+        function score(){
+            document.getElementById('score').innerHTML = "score : 0";
+        }
+        score();
+
+        function live(){
+            
+            document.getElementById('live').innerHTML = 'Lives : 3';
+            
+        }
+        live();
+        function callive(){
+            
+            if(ninjaman.y==ghost.y && ninjaman.x==ghost.x || ninjaman.y==ghost2.y && ninjaman.x==ghost2.x){
+                liv-=1;                
+                
+            }
+            document.getElementById('live').innerHTML = 'Lives : '+ liv;
+            if(liv==0){ document.getElementById('gameover').innerHTML = '<div class="gameover">GAMEOVER</div>';
+            setTimeout(function(){
+                 window.location.reload();
+                }, 2000);
+            }
+        }
+
+
+        function calscore(){
+            if(world[ninjaman.y][ninjaman.x] == 2 ){
+                        s+=10 ;
+                        document.getElementById('score').innerHTML = 'score : '+ s;
+                    }
+                    if(world[ninjaman.y][ninjaman.x] == 3 ){
+                        s+=5;
+                        document.getElementById('score').innerHTML = 'score : '+ s;
+                    }
+        }
+        
+        var ghost={x:4,
+            y: 4,
+        }
+
+        function drawnghost(){
+            document.getElementById('ghost').style.top = ghost.y * 40 + 'px'
+            document.getElementById('ghost').style.left = ghost.x * 40 + 'px'
+            document.getElementById('ghost2').style.top = ghost2.y * 40 + 'px'
+            document.getElementById('ghost2').style.left = ghost2.x * 40 + 'px'
+        }
+        drawnghost();
+        
+        function moveghost(){
+            var a=0;
+            a=Math.floor(Math.random()*5);
+            if(a==0){ghost.x+=1;if(world[ghost.y][ghost.x]==1){ghost.x-=2}}
+            if(a==1){ghost.x-=1;if(world[ghost.y][ghost.x]==1){ghost.x+=2}}
+            if(a==2){ghost.y+=1;if(world[ghost.y][ghost.x]==1){ghost.y-=2}}
+            if(a==3){ghost.y-=1;if(world[ghost.y][ghost.x]==1){ghost.y+=2}}
+                drawnghost();
+        }
+        var b=0;
+        function moveghost2(){
+            var b=0;
+            b=Math.floor(Math.random()*5);
+            if(b==0){ghost2.x+=1;if(world[ghost2.y][ghost2.x]==1){ghost2.x-=2}}
+            if(b==1){ghost2.x-=1;if(world[ghost2.y][ghost2.x]==1){ghost2.x+=2}}
+            if(b==2){ghost2.y+=1;if(world[ghost2.y][ghost2.x]==1){ghost2.y-=2}}
+            if(b==3){ghost2.y-=1;if(world[ghost2.y][ghost2.x]==1){ghost2.y+=2}}
+                drawnghost();
+        }
+
+        
+
+        document.onkeydown = function(e){
+            if(e.keyCode == 37){
+                if(world[ninjaman.y][ninjaman.x - 1] != 1 ){
+                    ninjaman.x--; 
+                    calscore();
+                    
+                }
+                
+            }
+            if(e.keyCode == 39){
+                if(world[ninjaman.y][ninjaman.x + 1] != 1){
+                    ninjaman.x++;
+                   calscore();
+                  
+                }
+            }
+            if(e.keyCode == 40){
+                if(world[ninjaman.y +1][ninjaman.x] != 1){
+                    ninjaman.y++;
+                   calscore();
+                  
+                }
+            } 
+
+            if(e.keyCode == 38){
+                if(world[ninjaman.y - 1][ninjaman.x] != 1){
+                    ninjaman.y--;
+                    calscore();
+                    
+
+                }
+            }        
+            
+            moveghost();
+            moveghost2();
+            world[ninjaman.y][ninjaman.x] = 0;
+            drawninjaman();     
+            drawWorld();
+            callive();
+        }
+        
+        
+                   
+         
+
+    </script>
+    
+    
+</html>
